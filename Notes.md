@@ -31,3 +31,9 @@ do_something_with(fd)
 close(fd)
 ```
 The type of a socket (listening or connection) is determined after the listen() or connect() syscall.
+
+compile server and client
+```
+g++ -Wall -Wextra -O2 -g server.cpp -o server.out
+g++ -Wall -Wextra -O2 -g client.cpp -o client.out
+```
