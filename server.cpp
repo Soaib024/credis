@@ -161,7 +161,7 @@ static bool try_one_request(Conn *conn){
 
 static bool try_fill_buffer(Conn * conn){
     assert(conn->rbuf_size < sizeof(conn->rbuf));
-    size_t rv = 0;
+    ssize_t rv = 0;
     do{
         size_t cap = sizeof(conn->rbuf) - conn->rbuf_size;
         rv = read(conn->fd, &conn->rbuf[conn->rbuf_size], cap);
