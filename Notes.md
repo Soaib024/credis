@@ -37,3 +37,31 @@ compile server and client
 g++ -Wall -Wextra -O2 -g server.cpp -o server.out
 g++ -Wall -Wextra -O2 -g client.cpp -o client.out
 ```
+
+## The Event Loop & Non-blocking IO
+There are 3 ways to deal with concurrent connections in server-side network programming. 
+They are: forking, multi-threading, and event loops. Forking creates new processes for each
+client connection to achieve concurrency. Multi-threading uses threads instead of processes.
+An event loop uses polling and nonblocking IO and usually runs on a single thread. 
+Due to the overhead of processes and threads, most modern production-grade software uses event loops for networking.
+
+
+Instead of just doing things (reading, writing, or accepting) with fds, we use the poll operation 
+to tell us which fd can be operated immediately without blocking. When we perform an IO operation 
+on an fd, the operation should be performed in the nonblocking mode.
+
+In blocking mode, read blocks the caller when there are no data in the kernel, write blocks when
+the write buffer is full, and accept blocks when there are no new connections in the kernel queue.
+In nonblocking mode, those operations either success without blocking, or fail with the errno 
+EAGAIN, which means “not ready”. Nonblocking operations that fail with EAGAIN must be 
+retried after the readiness was notified by the poll.
+
+The poll is the sole blocking operation in an event loop, everything else must be nonblocking;
+thus, a single thread can handle multiple concurrent connections. All blocking networking IO APIs, 
+such as read, write, and accept, have a nonblocking mode. APIs that do not have a nonblocking mode, 
+such as gethostbyname, and disk IOs, should be performed in thread pools, Also, timers must be 
+implemented within the event loop since we can’t sleep waiting inside the event loop.
+
+We’ll use the poll syscall since it’s slightly less code than the stateful epoll API. However,
+the epoll API is preferable in real-world projects since the argument for the poll can become too
+large as the number of fds increases.
