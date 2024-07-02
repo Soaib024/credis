@@ -26,7 +26,7 @@ struct Conn {
 
     //buffer for reading
     size_t rbuf_size = 0; // Current size of data in the buffer
-    uint8_t rbuf[4 + k_max_msg];
+    uint8_t rbuf[4 + k_max_msg]; //4100 B
 
     //buffer for writing
     size_t wbuf_size = 0;
@@ -140,7 +140,7 @@ static bool try_one_request(Conn *conn){
     //generating echoing response
     memcpy(&conn->wbuf[0], &len, 4);
     memcpy(&conn->wbuf[4], &conn->rbuf[4], len);
-    conn->wbuf_sent = 4 + len;
+    conn->wbuf_size = 4 + len;
 
     size_t remain = conn->rbuf_size - 4 - len;
     if(remain){
