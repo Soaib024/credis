@@ -65,3 +65,17 @@ implemented within the event loop since we can’t sleep waiting inside the even
 We’ll use the poll syscall since it’s slightly less code than the stateful epoll API. However,
 the epoll API is preferable in real-world projects since the argument for the poll can become too
 large as the number of fds increases.
+
+## Command encoding
++------+-----+------+-----+------+-----+-----+------+
+| nstr | len | str1 | len | str2 | ... | len | strn |
++------+-----+------+-----+------+-----+-----+------+
+
+The nstr is the number of strings and the len is the length of the following string. Both are 32-bit integers.
+
+## Response encoding
++-----+---------+
+| res | data... |
++-----+---------+
+
+The response is a 32-bit status code followed by the response string.
