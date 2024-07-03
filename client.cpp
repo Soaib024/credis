@@ -68,7 +68,7 @@ static int32_t send_req(int fd, const std::vector<std::string> &cmd){
     size_t curr = 8;
     for(const std::string &s: cmd){
         uint32_t p = (uint32_t)s.size();
-        memcmp(&wbuf[curr], &p, 4);
+        memcpy(&wbuf[curr], &p, 4);
         memcpy(&wbuf[4 + curr], s.data(), s.size());
         curr += 4 + s.size();
     }
